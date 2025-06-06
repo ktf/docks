@@ -17,6 +17,7 @@ curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64
   sed '/^Version/d' > /etc/pki/rpm-gpg/RPM-GPG-KEY-NVIDIA
 echo "${NVIDIA_GPGKEY_SUM}  /etc/pki/rpm-gpg/RPM-GPG-KEY-NVIDIA" | sha256sum -c --strict -
 
+rpm --import https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux
 # Install requirements for GPU event display, NVIDIA CUDA and AMD ROCm stacks
 yum install -y freeglut-devel lsof "cuda-cudart-$CUDA_PKG_VERSION" 'cuda-compat-12-0-*'           \
                "cuda-libraries-$CUDA_PKG_VERSION" "cuda-nvtx-$CUDA_PKG_VERSION"                   \
@@ -30,7 +31,7 @@ yum clean all
 rm -rf /var/cache/yum
 
 # Set up NVIDIA CUDA stack
-ln -s cuda-12.2 /usr/local/cuda
+ln -s cuda-12.6 /usr/local/cuda
 echo /usr/local/nvidia/lib >> /etc/ld.so.conf.d/nvidia.conf
 echo /usr/local/nvidia/lib64 >> /etc/ld.so.conf.d/nvidia.conf
 export PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}

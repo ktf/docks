@@ -1,9 +1,9 @@
 {
-  "_comment": "Alma 8.7 GPU builder X-enabled CUDA12.2-enabled AMD ROCm 5.5.3-enabled",
+  "_comment": "Alma 8.7 GPU builder X-enabled CUDA12.6-enabled AMD ROCm 5.5.3-enabled",
   "variables": {
     "REPO": "registry.cern.ch/alisw/slc8-gpu-builder",
     "TAG": "latest",
-    "CUDA_PKG_VERSION": "12-2-12.2.*",
+    "CUDA_PKG_VERSION": "12-6-12.6.*",
     "NVIDIA_GPGKEY_SUM": "d0664fbbdb8c32356d45de36c5984617217b2d0bef41b93ccecd326ba3b80c87"
   },
   "builders": [
@@ -57,7 +57,11 @@
         "repository": "{{user `REPO`}}",
         "tag": "{{user `TAG`}}"
       },
-      "docker-push"
+      {
+        "type": "shell-local",
+        "inline": ["echo 'The image was built successfully. To push the image to the registry, you can run: docker push {{user `REPO`}}:{{user `TAG`}}'"]
+      }
+
     ]
   ]
 }

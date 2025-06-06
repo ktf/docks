@@ -13,50 +13,55 @@ wipeyum () {
 }
 
 wipeyum
-yum install -y centos-release-scl http://mirror.switch.ch/ftp/mirror/epel/epel-release-latest-7.noarch.rpm
-yum-config-manager --enable rhel-server-rhscl-7-rpms
+
+sed -i.bak -e 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+sed -i.bak -r -e 's|# ?baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+find /etc/yum.repos.d -name "*.bak" -delete
+yum clean all
 yum update -y
+
 yum groups install -y 'Development Tools' 'X Window System'
-yum install -y rh-ruby23-ruby-devel python{27,36}-PyYAML           \
-               bc compat-libstdc++-33 e2fsprogs e2fsprogs-libs git \
-               python2-futures java-1.7.0-openjdk libXmu libXpm    \
-               perl-ExtUtils-Embed rpm-build screen tcl tcsh tk    \
-               wget which zsh gcc gcc-gfortran gcc-c++             \
-               libX11-devel libXpm-devel libXft-devel              \
-               libXi-devel pigz                                    \
-               libXext-devel redhat-lsb libtool automake autoconf  \
-               libxml2-devel openssl-devel libcurl-devel           \
-               bzip2-devel mesa-libGLU-devel zip perl-libwww-perl  \
-               svn cvs flex bison texinfo glibc-devel.i686         \
-               glibc-devel.x86_64 libgcc.i686 libgcc.x86_64        \
-               ncurses-devel vim-enhanced gdb valgrind swig        \
-               apr-devel subversion-devel cyrus-sasl-md5 rubygems  \
-               ruby-devel uuid-devel environment-modules           \
-               python-requests libuuid-devel createrepo            \
-               protobuf-devel python-pip python-devel              \
-               python3-pip python3-devel python3-requests          \
-               mariadb-devel kernel-devel pciutils-devel           \
-               kmod-devel motif motif-devel                        \
-               numactl-devel doxygen graphviz glfw-devel           \
-               zlib-devel readline-devel openssh-server            \
-               libglvnd-opengl tk-devel libfabric-devel sshpass    \
+yum install -y python{27,36}-PyYAML           \
+               bc compat-libstdc++-33 e2fsprogs e2fsprogs-libs git        \
+               python2-futures java-1.7.0-openjdk libXmu libXpm           \
+               perl-ExtUtils-Embed rpm-build screen tcl tcsh tk           \
+               wget which zsh gcc gcc-gfortran gcc-c++                    \
+               libX11-devel libXpm-devel libXft-devel libXinerama-devel   \
+               libXi-devel libXrandr-devel libXcursor-devel pigz          \
+               libXext-devel redhat-lsb libtool automake autoconf         \
+               libxml2-devel openssl-devel libcurl-devel                  \
+               bzip2-devel mesa-libGLU-devel zip perl-libwww-perl         \
+               svn cvs flex bison texinfo glibc-devel.i686                \
+               glibc-devel.x86_64 libgcc.i686 libgcc.x86_64               \
+               ncurses-devel vim-enhanced gdb valgrind swig               \
+               apr-devel subversion-devel cyrus-sasl-md5                  \
+               ruby-devel uuid-devel environment-modules                  \
+               python-requests libuuid-devel createrepo                   \
+               protobuf-devel python-pip python-devel                     \
+               python3-pip python3-devel python3-requests                 \
+               mariadb-devel kernel-devel pciutils-devel                  \
+               kmod-devel motif motif-devel                               \
+               numactl-devel doxygen graphviz glfw-devel                  \
+               zlib-devel readline-devel openssh-server                   \
+               libglvnd-opengl tk-devel libfabric-devel sshpass           \
                gettext-devel rclone s3cmd
 wipeyum
-cat << \EOF > /etc/profile.d/enable-alice.sh
-source scl_source enable rh-ruby23
-EOF
 
-set +ex  # scl_source doesn't work with `set -e`
-source scl_source enable rh-ruby23
-set -ex
+gpg2 --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+curl -sSL https://get.rvm.io | bash -s stable
+source /etc/profile.d/rvm.sh
+rvm install ruby 2.4
 
+# Pin some dependencies as fpm doesn't
+gem install dotenv -v 2.7.6
+gem install rexml -v 3.2.5
 gem install --no-document fpm
 
 mkdir /tmp/cctools
 curl -fsSL "https://github.com/cooperative-computing-lab/cctools/archive/release/$CCTOOLS_VERSION.tar.gz" |
   tar --strip-components=1 -xzC /tmp/cctools
 cd /tmp/cctools
-./configure --prefix=/usr/local
+./configure --prefix=/usr/local --with-zlib-path=/usr/lib64
 make -j10
 make install
 cd /
