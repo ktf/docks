@@ -2,7 +2,7 @@
   "_comment": "Alma 9 builder",
   "variables": {
     "REPO": "registry.cern.ch/alisw/slc9-arm-builder",
-    "TAG": "latest"
+    "TAG": "9.7"
   },
   "builders": [
     {
