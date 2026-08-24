@@ -4,7 +4,7 @@
     "REPO": "registry.cern.ch/alisw/security-proxy",
     "TAG": "latest",
     "_comment_ALI_BOT_REF": "Pinned commit, not a branch: the image holds the AC signing key at runtime, so what goes into it should be a deliberate choice rather than whatever master said at build time. Bump this to pick up ali-bot changes. Pass -var ALI_BOT_REF=master to float.",
-    "ALI_BOT_REF": "610f3d8836ad0665fd01a94af5638f99468b4d0c"
+    "ALI_BOT_REF": "5c223b40a688ba090b855c2439d8119051ad0786"
   },
   "builders": [
     {
